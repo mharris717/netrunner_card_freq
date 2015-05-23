@@ -45,9 +45,10 @@ class DeckDay
 
   validates :date, presence: true, uniqueness: true
 
-  fattr(:deck_objs) do
-    decks.map do |deck|
-      Deck.new(card_hash: deck['cards'])
+  def save_decks!
+    puts "Saving #{date}"
+    decks.each do |raw|
+      SaveDeck.new(raw_deck: raw).save!
     end
   end
 end
@@ -82,7 +83,7 @@ class SaveDeck
     res = {}
     raw_deck['cards'].each do |code,num|
       card = Card.first_only(code: code)
-      res[card.id] = num
+      res[card.name] = num
     end
     res
   end
@@ -111,6 +112,10 @@ class SaveDeck
   def save!
     create! unless exists
   end
+
+  def self.save_all!
+    DeckDay.all.each { |x| x.save_decks! }
+  end
 end
 
 class Deck
@@ -129,4 +134,14 @@ class Deck
 
   validates :side, presence: true, inclusion: %w(Runner Corp)
   validates :faction, presence: true
+
+  def update_cards!
+    res = []
+
+    cards.each do |card|
+      res << Card.first_only(code: card.code)
+    end
+
+    update_attributes! cards: res
+  end
 end

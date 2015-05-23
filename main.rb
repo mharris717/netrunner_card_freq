@@ -3,45 +3,38 @@ require 'mharris_ext'
 require 'json'
 require 'open-uri'
 load "ext.rb"
+load 'deck.rb'
+load 'card.rb'
 
 Mongoid.load!("mongoid.yml", :development)
 
-class SaveCards
-  fattr(:url) do
-    "http://netrunnerdb.com/api/cards/"
+class CardBreakdown
+  include FromHash
+  attr_accessor :faction
+
+  fattr(:decks) do
+    Deck.where(faction: faction)
   end
-  fattr(:body) do
-    JSON.parse(open(url).read)
+
+  fattr(:freq_hash) do
+    res = Hash.new { |h,k| h[k] = 0 }
+    decks.each do |deck|
+      deck.cards.each do |card|
+        res[card] += 1
+      end
+    end
+    res
   end
-  def create!
-    body.each do |raw|
-      Card.create! raw.with_keys('faction','code','title','type','side','setname')
+
+  def print!
+    puts faction.to_s.upcase
+    freq_hash.each_sorted_by_value_desc(10) do |card,num|
+      perc = num.to_f / decks.size.to_f
+      if perc > 0.05
+        puts "#{perc.to_s_perc} #{card.name_and_set}"
+      end
     end
   end
-  def save!
-    create! if Card.count == 0
-  end
-end
-
-class Card
-  include Mongoid::Document
-  field :code, type: String
-  field :type, type: String
-  field :faction, type: String
-  field :title, type: String
-  field :side, type: String
-  field :setname, type: String
-
-  validates :code, presence: true, uniqueness: true
-
-  def name_and_set
-    s = "(#{setname})".rpad(25)
-    "#{title.rpad(25)} #{s} #{faction}"
-  end
-end
-
-class CardNames
-  fattr(:names) { {} }
 end
 
 class CardCounts
@@ -75,8 +68,30 @@ end
 # SaveCards.new.save!
 # puts Card.count
 
-#Card.delete_all
-SaveCards.new.save!
+#SaveCards.new.update!
+#Deck.all.each { |x| x.update_cards! }
+
+def print_counts
+  puts "COUNTS"
+  puts "Card: #{Card.count}"
+  puts "Deck: #{Deck.count}"
+end
+
+print_counts
+
+%w(Anarch Shaper Criminal).each do |faction|
+  breakdown = CardBreakdown.new(faction: faction)
+  breakdown.print!
+  puts "\n"
+end
+
+# Card.delete_all
+# SaveCards.new.save!
+
+#Deck.delete_all
+#SaveDeck.save_all!
+
+#print_counts
 
 #counts.print!
 
@@ -90,4 +105,4 @@ SaveCards.new.save!
 #   puts card.faction
 # end
 
-puts DeckDay.first.deck_objs.first.faction
+#puts DeckDay.first.deck_objs.first.faction

@@ -60,9 +60,18 @@ class Hash
     res
   end
 
-  def each_sorted_by_value_desc(&b)
-    to_a.sort_by { |x| x[1] }.reverse.each do |a|
+  def each_sorted_by_value_desc(num=nil,&b)
+    to_a.sort_by { |x| x[1] }.reverse.each_with_index do |a,i|
+      return if num && num <= i
       yield *a
     end
+  end
+end
+
+class Numeric
+  def to_s_perc
+    num = (to_f * 100.0).round(1)
+    #num = num.to_i if num == num.to_i
+    "#{num}%"
   end
 end
