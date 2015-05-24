@@ -114,7 +114,7 @@ class SaveDeck
   end
 
   def self.save_all!
-    DeckDay.all.each { |x| x.save_decks! }
+    DeckDay.all.limit(1).each { |x| x.save_decks! }
   end
 end
 

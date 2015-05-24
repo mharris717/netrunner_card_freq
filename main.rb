@@ -63,9 +63,19 @@ def counts
   $counts ||= CardCounts.new
 end
 
+# puts Card.all.map { |x| x.card_type }.uniq.sort.inspect
+# puts Card.all.map { |x| x.faction }.uniq.sort.inspect
+
+# Card.delete_all
+# SaveCards.new.save!
+# SaveCards.new.save_images!
+
 # puts DeckDay.count
 
+# Card.delete_all
+# Deck.delete_all
 # SaveCards.new.save!
+# SaveDeck.save_all!
 # puts Card.count
 
 #SaveCards.new.update!
@@ -77,13 +87,13 @@ def print_counts
   puts "Deck: #{Deck.count}"
 end
 
-print_counts
+# print_counts
 
-%w(Anarch Shaper Criminal).each do |faction|
-  breakdown = CardBreakdown.new(faction: faction)
-  breakdown.print!
-  puts "\n"
-end
+# %w(Anarch Shaper Criminal).each do |faction|
+#   breakdown = CardBreakdown.new(faction: faction)
+#   breakdown.print!
+#   puts "\n"
+# end
 
 # Card.delete_all
 # SaveCards.new.save!

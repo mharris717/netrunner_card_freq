@@ -7,7 +7,7 @@ class SaveCards
   end
 
   def attrs_for_raw(raw)
-    res = raw.with_keys('faction','code','title','type','side','setname','factioncost','text','quantity')
+    res = raw.with_keys('faction','code','title','type','side','setname','factioncost','text','quantity','imagesrc','url')
 
     res['card_type'] = res.delete('type')
     res['name'] = res.delete('title')
@@ -15,6 +15,8 @@ class SaveCards
     res['card_text'] = res.delete('text')
     res['influence'] = res.delete('factioncost')
     res['set_name'] = res.delete('setname')
+    res['ndb_url'] = res.delete('url')
+    res['remote_image_url'] = "http://netrunnerdb.com" + res.delete('imagesrc')
 
     res
   end
@@ -36,6 +38,20 @@ class SaveCards
       existing.update_attributes! attrs
     end
   end
+
+  def save_images!
+    c = Card.count
+    Card.all.each_with_index do |card,i|
+      puts "Saving image for #{card.name} #{i}/#{c}"
+      local = "images/#{card.code}.png"
+      if !File.exists?(local)
+        File.create local, open(card.remote_image_url).read
+      end
+    end
+
+    ember = "/code/orig/netrunner_ui"
+    ec "cp -r images #{ember}/public"
+  end
 end
 
 class Card
@@ -49,6 +65,12 @@ class Card
   field :influence, type: Integer
   field :card_text
   field :max_quantity, type: Integer
+  field :remote_image_url
+  field :ndb_url
+
+  def local_image_url
+    "images/#{code}.png"
+  end
 
   validates :code, presence: true, uniqueness: true
 

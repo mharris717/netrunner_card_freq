@@ -1,0 +1,6 @@
+development:
+  sessions:
+    default:
+      database: netrunner_decks_dev
+      hosts:
+        - localhost:27017
