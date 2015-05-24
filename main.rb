@@ -8,35 +8,6 @@ load 'card.rb'
 
 Mongoid.load!("mongoid.yml", :development)
 
-class CardBreakdown
-  include FromHash
-  attr_accessor :faction
-
-  fattr(:decks) do
-    Deck.where(faction: faction)
-  end
-
-  fattr(:freq_hash) do
-    res = Hash.new { |h,k| h[k] = 0 }
-    decks.each do |deck|
-      deck.cards.each do |card|
-        res[card] += 1
-      end
-    end
-    res
-  end
-
-  def print!
-    puts faction.to_s.upcase
-    freq_hash.each_sorted_by_value_desc(10) do |card,num|
-      perc = num.to_f / decks.size.to_f
-      if perc > 0.05
-        puts "#{perc.to_s_perc} #{card.name_and_set}"
-      end
-    end
-  end
-end
-
 class CardCounts
   fattr(:counts) do
     res = Hash.new { |h,k| h[k] = 0 }
@@ -63,6 +34,10 @@ def counts
   $counts ||= CardCounts.new
 end
 
+id = Card.first.id.to_s
+File.create "id.txt",id
+# puts Card.find(id).name
+
 # puts Card.all.map { |x| x.card_type }.uniq.sort.inspect
 # puts Card.all.map { |x| x.faction }.uniq.sort.inspect
 
@@ -73,9 +48,9 @@ end
 # puts DeckDay.count
 
 # Card.delete_all
-# Deck.delete_all
+#Deck.delete_all
 # SaveCards.new.save!
-# SaveDeck.save_all!
+#SaveDeck.save_all!
 # puts Card.count
 
 #SaveCards.new.update!
