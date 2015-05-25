@@ -106,7 +106,13 @@ class SaveDeck
   end
 
   def create!
-    Deck.create! attrs
+    # require 'pp'
+    # pp attrs
+    cards = attrs.delete(:cards)
+    res = Deck.new(attrs)
+    res.cards = cards
+    res.save!
+    res
   end
 
   def save!

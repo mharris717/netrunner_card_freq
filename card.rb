@@ -7,9 +7,10 @@ class SaveCards
   end
 
   def attrs_for_raw(raw)
-    res = raw.with_keys('faction','code','title','type','side','setname','factioncost','text','quantity','imagesrc','url')
+    res = raw.with_keys('faction','code','title','type','side','setname','factioncost','text','quantity','imagesrc','url','subtype')
 
     res['card_type'] = res.delete('type')
+    res['sub_card_type'] = res.delete('subtype')
     res['name'] = res.delete('title')
     res['max_quantity'] = res.delete('quantity')
     res['card_text'] = res.delete('text')
@@ -58,6 +59,7 @@ class Card
   include Mongoid::Document
   field :code, type: String
   field :card_type, type: String
+  field :sub_card_type, type: String
   field :faction, type: String
   field :name, type: String
   field :side, type: String

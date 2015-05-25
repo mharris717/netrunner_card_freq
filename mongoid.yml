@@ -4,3 +4,10 @@ development:
       database: netrunner_decks_dev
       hosts:
         - localhost:27017
+
+test:
+  sessions:
+    default:
+      database: netrunner_decks_test
+      hosts:
+        - localhost:27017

@@ -1,10 +1,4 @@
-require 'mongoid'
-require 'mharris_ext'
-require 'json'
-require 'open-uri'
-load "ext.rb"
-load 'deck.rb'
-load 'card.rb'
+load 'core.rb'
 
 Mongoid.load!("mongoid.yml", :development)
 
@@ -34,7 +28,7 @@ def counts
   $counts ||= CardCounts.new
 end
 
-id = Card.first.id.to_s
+id = Deck.first.id.to_s
 File.create "id.txt",id
 # puts Card.find(id).name
 

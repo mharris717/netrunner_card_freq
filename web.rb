@@ -11,18 +11,18 @@ require 'active_model_serializers'
 
 Mongoid.load!("mongoid.yml", :development)
 
-module Sinatra
-  module JSON
-    def json(object, options={})
-      serializer = ActiveModel::Serializer.serializer_for(object)
-      if serializer
-        serializer.new(object).to_json
-      else
-        object.to_json(options)
-      end
-    end
-  end
-end
+# module Sinatra
+#   module JSON
+#     def json(object, options={})
+#       serializer = ActiveModel::Serializer.serializer_for(object)
+#       if serializer
+#         serializer.new(object).to_json
+#       else
+#         object.to_json(options)
+#       end
+#     end
+#   end
+# end
 
 class CardSerializer < ActiveModel::Serializer
   attributes :id, :name, :card_type, :faction, :side, :set_name, :image_url, :ndb_url
@@ -37,15 +37,12 @@ class CardSerializer < ActiveModel::Serializer
 end
 
 class DeckSerializer < ActiveModel::Serializer
-  attributes :id, :side, :faction, :name, :cards
-  #has_many :cards
+  embed :ids, embed_in_root: true
+  attributes :id, :side, :faction, :name
+  has_many :cards, key: :cards, embed_key: :id_str
 
   def id
     object.id.to_s
-  end
-
-  def cards
-    object.cards.map { |x| x.id.to_s }
   end
 end
 
@@ -105,12 +102,18 @@ helpers do
 end
 
 helpers do
+  # def json_list(root,single_root,objs,serializer=nil)
+  #   serializer ||= ActiveModel::Serializer.serializer_for(objs.first)
+  #   content_type :json
+  #   res = objs.map { |x| serializer.new(x).as_json[single_root.to_s] }
+  #   puts res.inspect
+  #   {root => res}.to_json
+  # end
+
   def json_list(root,single_root,objs,serializer=nil)
-    serializer ||= ActiveModel::Serializer.serializer_for(objs.first)
     content_type :json
-    res = objs.map { |x| serializer.new(x).as_json[single_root.to_s] }
-    puts res.inspect
-    {root => res}.to_json
+    serializer = ActiveModel::ArraySerializer.new(objs, root: root)
+    serializer.to_json
   end
 
   def json_single(root,obj,serializer=nil)

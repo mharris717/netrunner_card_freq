@@ -75,3 +75,9 @@ class Numeric
     "#{num}%"
   end
 end
+
+class Object
+  def id_str
+    id.to_s
+  end
+end
