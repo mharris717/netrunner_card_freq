@@ -51,16 +51,20 @@ Mongoid.load!("mongoid.yml", :test)
 #   end
 # end
 
+def make_card
+  Card.create! name: rand(100000000).to_s, code: rand(1000000000).to_s
+end
+
+def make_deck
+  cards = 5.of do
+    make_card
+  end
+  Deck.create! cards: cards, name: rand(100000000).to_s, side: 'Runner', faction: 'Shaper'
+end
+
 describe "deck" do
   it 'smoke' do
     2.should == 2
-  end
-
-  def make_deck
-    cards = 5.of do
-      Card.create! name: rand(100000000).to_s, code: rand(1000000000).to_s
-    end
-    Deck.create! cards: cards, name: rand(100000000).to_s, side: 'Runner', faction: rand(100000000).to_s
   end
 
   let(:deck) do
@@ -69,7 +73,7 @@ describe "deck" do
 
   it 'single deck' do
     serializer = DeckSerializer.new(deck)
-    puts serializer.as_json.inspect
+    #puts serializer.as_json.inspect
     serializer.as_json['deck'][:cards].first.should == deck.cards.first.id.to_s
     serializer.as_json[:cards].size.should == 5
   end
@@ -85,3 +89,44 @@ describe "deck" do
     end
   end
 end
+
+describe "card breakdown" do
+  before do
+    Card.delete_all
+    Deck.delete_all
+    decks
+  end
+
+  let(:decks) do
+    2.of { make_deck }
+  end
+
+  let(:breakdown) do
+    CardBreakdown.new(faction: 'Shaper')
+  end
+
+  it 'smoke' do
+    breakdown.decks.size.should == 2
+    breakdown.freq_hash.size.should == 10
+  end
+
+  it 'serializer' do
+    serializer = CardBreakdownSerializer.new(breakdown)
+    serializer.as_json.tap do |payload|
+      payload = HashWithIndifferentAccess.new(payload)
+      payload[:card_breakdown][:id].should == 'Shaper'
+      payload[:card_frequencies].size.should == 10
+      payload[:cards].size.should == 10
+    end
+  end
+end
+
+
+
+
+
+
+
+
+
+

@@ -34,15 +34,25 @@ end
 #   end
 # end
 
-class CardFrequencySerializer < ActiveModel::Serializer
-  attributes :id, :cardName, :perc, :card
+class CardFrequencySerializer < BaseSerializer
+  attributes :id, :perc
+  has_one :card
+end
 
-  def card
-    object.card.id.to_s
+class CardBreakdownSerializer < BaseSerializer
+  attributes :id
+  has_many :card_frequencies, key: :card_frequencies, embed_key: :id_str
+
+  def card_frequencies
+    res = []
+    object.freq_hash.each_sorted_by_value_desc(50) do |card,num|
+      res << CardFrequency.new(card: card, perc: num.to_f / object.decks.size, faction: object.faction)
+    end
+    res
   end
 
-  def cardName
-    object.card.name
+  def id
+    object.faction
   end
 end
 
@@ -50,7 +60,6 @@ class CardFrequency
   include FromHash
   include ActiveModel::Serializers::JSON
   attr_accessor :card, :perc, :faction
-
 
   def id
     "#{faction}-#{card.name}"
@@ -61,13 +70,13 @@ class CardFrequency
   end
 
   class << self
-    def for(faction)
-      breakdown = CardBreakdown.new(faction: faction)
-      res = []
-      breakdown.freq_hash.each_sorted_by_value_desc(50) do |card,num|
-        res << CardFrequency.new(card: card, perc: num.to_f / breakdown.decks.size, faction: faction)
-      end
-      res
-    end
+    # def for(faction)
+    #   breakdown = CardBreakdown.new(faction: faction)
+    #   res = []
+    #   breakdown.freq_hash.each_sorted_by_value_desc(50) do |card,num|
+    #     res << CardFrequency.new(card: card, perc: num.to_f / breakdown.decks.size, faction: faction)
+    #   end
+    #   res
+    # end
   end
 end

@@ -18,7 +18,7 @@ helpers do
     serializer.to_json
   end
 
-  def json_single(root,obj,serializer=nil)
+  def json_single(obj,serializer=nil)
     serializer ||= ActiveModel::Serializer.serializer_for(obj)
     content_type :json
     res = serializer.new(obj).as_json
@@ -31,7 +31,7 @@ get "/api/cards" do
 end
 
 get "/api/cards/:id" do
-  json_single :card, Card.where(id: params[:id]).first
+  json_single Card.where(id: params[:id]).first
 end
 
 get "/api/decks" do
@@ -43,4 +43,9 @@ get "/api/cardFrequencies" do
   freqs = CardFrequency.for(faction)
   puts freqs.inspect
   json_list :cardFrequencies, :card_frequency, freqs, CardFrequencySerializer
+end
+
+get "/api/cardBreakdowns/:faction" do
+  breakdown = CardBreakdown.new(faction: params[:faction])
+  json_single breakdown
 end
