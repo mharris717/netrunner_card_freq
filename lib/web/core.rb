@@ -1,8 +1,13 @@
-load 'core.rb'
+dir = File.expand_path(File.dirname(__FILE__))
+load "#{dir}/../core.rb"
 require 'active_model_serializers'
 
+ActiveModel::Serializer.setup do |config|
+  config.embed = :ids
+  config.embed_in_root = true
+end
+
 class BaseSerializer < ActiveModel::Serializer
-  embed :ids, embed_in_root: true
   def id
     object.id.to_s
   end
@@ -36,12 +41,12 @@ end
 
 class CardFrequencySerializer < BaseSerializer
   attributes :id, :perc
-  has_one :card
+  has_one :card, key: :card, embed_key: :id_str
 end
 
 class CardBreakdownSerializer < BaseSerializer
   attributes :id
-  has_many :card_frequencies, key: :card_frequencies, embed_key: :id_str
+  has_many :card_frequencies, key: :cardFrequencies, embed_key: :id_str
 
   def card_frequencies
     res = []
@@ -62,7 +67,7 @@ class CardFrequency
   attr_accessor :card, :perc, :faction
 
   def id
-    "#{faction}-#{card.name}"
+    "#{faction}#{card.name}".downcase.gsub(' ','').gsub("-",'')
   end
 
   def attributes

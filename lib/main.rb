@@ -1,4 +1,5 @@
-load 'core.rb'
+dir = File.expand_path(File.dirname(__FILE__))
+load "#{dir}/core.rb"
 
 Mongoid.load!("mongoid.yml", :development)
 

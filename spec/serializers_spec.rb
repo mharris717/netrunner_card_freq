@@ -1,7 +1,4 @@
-require 'rspec'
-load "web/core.rb"
-
-Mongoid.load!("mongoid.yml", :test)
+require 'spec_helper'
 
 # require 'sinatra'
 # require 'mongoid'
@@ -82,7 +79,7 @@ describe "deck" do
     decks = 2.of { make_deck }
     serializer = ActiveModel::ArraySerializer.new(decks, root: :decks)
     serializer.as_json.tap do |payload|
-      puts payload.inspect
+      #puts payload.inspect
       payload[:decks].size.should == 2
       payload[:decks].first[:id].should == decks.first.id.to_s
       payload[:cards].size.should == 10
@@ -120,13 +117,4 @@ describe "card breakdown" do
     end
   end
 end
-
-
-
-
-
-
-
-
-
 

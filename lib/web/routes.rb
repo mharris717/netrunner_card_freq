@@ -1,4 +1,5 @@
-load 'web/core.rb'
+dir = File.expand_path(File.dirname(__FILE__))
+load "#{dir}/core.rb"
 require 'sinatra'
 
 Mongoid.load!("mongoid.yml", :development)
@@ -45,7 +46,7 @@ get "/api/cardFrequencies" do
   json_list :cardFrequencies, :card_frequency, freqs, CardFrequencySerializer
 end
 
-get "/api/cardBreakdowns/:faction" do
+get "/api/card_breakdowns/:faction" do
   breakdown = CardBreakdown.new(faction: params[:faction])
   json_single breakdown
 end
