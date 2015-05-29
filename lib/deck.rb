@@ -26,7 +26,7 @@ class SaveDate
 
   class << self
     def save!
-      date = Date.new(2015,5,20)
+      date = Date.new(2015,5,28)
       50.times do
         puts date
         save = SaveDate.new(date: date)
@@ -46,7 +46,7 @@ class DeckDay
   validates :date, presence: true, uniqueness: true
 
   def save_decks!
-    puts "Saving #{date}"
+    puts "Saving #{date} #{Deck.count}"
     decks.each do |raw|
       SaveDeck.new(raw_deck: raw).save!
     end
@@ -120,7 +120,7 @@ class SaveDeck
   end
 
   def self.save_all!
-    DeckDay.all.limit(1).each { |x| x.save_decks! }
+    DeckDay.all.each { |x| x.save_decks! }
   end
 end
 

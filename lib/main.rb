@@ -29,8 +29,11 @@ def counts
   $counts ||= CardCounts.new
 end
 
-id = Deck.first.id.to_s
-File.create "id.txt",id
+puts Deck.count
+SaveDate.save!
+
+# id = Deck.first.id.to_s
+# File.create "id.txt",id
 # puts Card.find(id).name
 
 # puts Card.all.map { |x| x.card_type }.uniq.sort.inspect
@@ -43,9 +46,9 @@ File.create "id.txt",id
 # puts DeckDay.count
 
 # Card.delete_all
-#Deck.delete_all
+Deck.delete_all
 # SaveCards.new.save!
-#SaveDeck.save_all!
+SaveDeck.save_all!
 # puts Card.count
 
 #SaveCards.new.update!

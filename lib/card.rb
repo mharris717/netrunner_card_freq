@@ -83,17 +83,21 @@ end
 
 class CardBreakdown
   include FromHash
-  attr_accessor :faction
+  attr_accessor :faction, :card_faction
 
   fattr(:decks) do
     Deck.where(faction: faction)
+  end
+
+  def use_card?(card)
+    card_faction.blank? || card_faction == card.faction
   end
 
   fattr(:freq_hash) do
     res = Hash.new { |h,k| h[k] = 0 }
     decks.each do |deck|
       deck.cards.each do |card|
-        res[card] += 1
+        res[card] += 1 if use_card?(card)
       end
     end
     res

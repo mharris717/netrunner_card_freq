@@ -47,6 +47,11 @@ get "/api/cardFrequencies" do
 end
 
 get "/api/card_breakdowns/:faction" do
-  breakdown = CardBreakdown.new(faction: params[:faction])
+  breakdown = CardBreakdown.new(faction: params[:faction], card_faction: params[:card_faction]||'Criminal')
+  json_single breakdown
+end
+
+get "/api/card_breakdowns" do
+  breakdown = CardBreakdown.new(faction: params[:faction], card_faction: params[:card_faction])
   json_single breakdown
 end

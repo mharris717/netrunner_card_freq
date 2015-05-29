@@ -45,12 +45,12 @@ class CardFrequencySerializer < BaseSerializer
 end
 
 class CardBreakdownSerializer < BaseSerializer
-  attributes :id
+  attributes :id, :num_decks
   has_many :card_frequencies, key: :cardFrequencies, embed_key: :id_str
 
   def card_frequencies
     res = []
-    object.freq_hash.each_sorted_by_value_desc(50) do |card,num|
+    object.freq_hash.each_sorted_by_value_desc(10) do |card,num|
       res << CardFrequency.new(card: card, perc: num.to_f / object.decks.size, faction: object.faction)
     end
     res
@@ -58,6 +58,10 @@ class CardBreakdownSerializer < BaseSerializer
 
   def id
     object.faction
+  end
+
+  def num_decks
+    object.decks.size
   end
 end
 
