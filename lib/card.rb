@@ -83,14 +83,34 @@ end
 
 class CardBreakdown
   include FromHash
-  attr_accessor :faction, :card_faction
+  attr_accessor :faction, :card_faction, :card_type
+  fattr(:included_cards) { [] }
 
   fattr(:decks) do
-    Deck.where(faction: faction)
+    res = Deck.where(faction: faction)
+    if included_cards.size > 0
+      codes = included_cards.map { |x| x.code }
+      res = res.where("cards.code" => {"$all" => codes})
+    end
+    res
+  end
+
+  def use_card_faction?(card)
+    return true if card_faction.blank?
+    return true if card_faction == card.faction
+    return true if card_faction == 'Splashed' && card.faction != faction && card.faction != 'Neutral'
+    return true if card_faction == 'Off Faction' && card.faction != faction
+    false
+  end
+
+  def use_card_type?(card)
+    return true if card_type.blank?
+    return true if card_type == card.card_type
+    false
   end
 
   def use_card?(card)
-    card_faction.blank? || card_faction == card.faction
+    use_card_faction?(card) && use_card_type?(card)
   end
 
   fattr(:freq_hash) do
@@ -103,6 +123,24 @@ class CardBreakdown
     res
   end
 
+  fattr(:set_hash) do
+    res = Hash.new { |h,k| h[k] = 0 }
+    decks.each do |deck|
+      deck.cards.each do |card|
+        res[card.set_name] += 1 if use_card?(card)
+      end
+    end
+    res
+  end
+
+  fattr(:set_hashx) do
+    res = Hash.new { |h,k| h[k] = 0 }
+    freq_hash.each_sorted_by_value_desc(50) do |card,num|
+      res[card.set_name] += 1
+    end
+    res
+  end
+
   def print!
     puts faction.to_s.upcase
     freq_hash.each_sorted_by_value_desc(10) do |card,num|
@@ -110,6 +148,13 @@ class CardBreakdown
       if perc > 0.05
         puts "#{perc.to_s_perc} #{card.name_and_set}"
       end
+    end
+  end
+
+  def print_sets!
+    puts faction.to_s.upcase
+    set_hash.each_sorted_by_value_desc(20) do |set,num|
+      puts "#{num} #{set}"
     end
   end
 end

@@ -29,8 +29,19 @@ def counts
   $counts ||= CardCounts.new
 end
 
-puts Deck.count
-SaveDate.save!
+Card.all.map { |x| x.faction }.uniq.each do |faction|
+  b = CardBreakdown.new(faction: faction)
+  b.print_sets!
+end
+# Card.delete_all
+# SaveCards.new.save!
+
+# puts Deck.all.map { |x| x.faction }.uniq.sort.inspect
+# puts Card.all.map { |x| x.card_type }.uniq.sort.inspect
+# puts Card.all.map { |x| x.sub_card_type }.uniq.sort_by { |x| x.to_s }.inspect
+
+# puts Deck.count
+# SaveDate.save!
 
 # id = Deck.first.id.to_s
 # File.create "id.txt",id
@@ -46,9 +57,9 @@ SaveDate.save!
 # puts DeckDay.count
 
 # Card.delete_all
-Deck.delete_all
+#Deck.delete_all
 # SaveCards.new.save!
-SaveDeck.save_all!
+#SaveDeck.save_all!
 # puts Card.count
 
 #SaveCards.new.update!

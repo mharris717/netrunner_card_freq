@@ -48,16 +48,16 @@ require 'spec_helper'
 #   end
 # end
 
-def make_card
-  Card.create! name: rand(100000000).to_s, code: rand(1000000000).to_s
-end
+# def make_card
+#   Card.create! name: rand(100000000).to_s, code: rand(1000000000).to_s
+# end
 
-def make_deck
-  cards = 5.of do
-    make_card
-  end
-  Deck.create! cards: cards, name: rand(100000000).to_s, side: 'Runner', faction: 'Shaper'
-end
+# def make_deck
+#   cards = 5.of do
+#     make_card
+#   end
+#   Deck.create! cards: cards, name: rand(100000000).to_s, side: 'Runner', faction: 'Shaper'
+# end
 
 describe "deck" do
   it 'smoke' do

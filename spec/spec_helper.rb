@@ -93,3 +93,17 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 end
+
+def make_card(ops={})
+  ops = {name: rand(100000000).to_s, code: rand(1000000000).to_s}.merge(ops)
+  Card.create! ops
+end
+
+def make_deck(ops={})
+  defaults = {name: rand(100000000).to_s, side: 'Runner', faction: 'Shaper'}
+  ops = defaults.merge(ops)
+  ops[:cards] ||= 5.of do
+    make_card
+  end
+  Deck.create! ops
+end

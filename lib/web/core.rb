@@ -40,7 +40,7 @@ end
 # end
 
 class CardFrequencySerializer < BaseSerializer
-  attributes :id, :perc
+  attributes :id, :perc, :adj_perc
   has_one :card, key: :card, embed_key: :id_str
 end
 
@@ -48,16 +48,19 @@ class CardBreakdownSerializer < BaseSerializer
   attributes :id, :num_decks
   has_many :card_frequencies, key: :cardFrequencies, embed_key: :id_str
 
-  def card_frequencies
+  fattr(:card_frequencies) do
     res = []
-    object.freq_hash.each_sorted_by_value_desc(10) do |card,num|
-      res << CardFrequency.new(card: card, perc: num.to_f / object.decks.size, faction: object.faction)
+    top_num = nil
+    object.freq_hash.each_sorted_by_value_desc(200) do |card,num|
+      top_num ||= num
+      res << CardFrequency.new(card: card, num: num, num_decks: object.decks.size, top_num: top_num, faction: object.faction)
+      #res << CardFrequency.new(card: card, perc: num.to_f / object.decks.size, faction: object.faction)
     end
     res
   end
 
   def id
-    object.faction
+    "#{object.faction}#{object.card_faction}"
   end
 
   def num_decks
@@ -68,7 +71,15 @@ end
 class CardFrequency
   include FromHash
   include ActiveModel::Serializers::JSON
-  attr_accessor :card, :perc, :faction
+  attr_accessor :card, :num, :num_decks, :top_num, :faction
+
+  def perc
+    num.to_f / num_decks.to_f
+  end
+
+  def adj_perc
+    num.to_f / top_num.to_f
+  end
 
   def id
     "#{faction}#{card.name}".downcase.gsub(' ','').gsub("-",'')
