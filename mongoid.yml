@@ -11,3 +11,6 @@ test:
       database: netrunner_decks_test
       hosts:
         - localhost:27017
+
+production:
+  uri: <%= ENV['MONGOHQ_URL'] %>

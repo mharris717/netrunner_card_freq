@@ -1,11 +1,17 @@
 dir = File.expand_path(File.dirname(__FILE__))
 load "#{dir}/core.rb"
 require 'sinatra'
-require 'redis'
 
-Mongoid.load!("mongoid.yml", :development)
+def mongo_env
+  if FileTest.exist?("/code/orig/netrunner_decks")
+    :development
+  else
+    :production
+  end
+end
+Mongoid.load!("mongoid.yml", mongo_env)
 
-Redis.current.flushdb
+# Redis.current.flushdb
 
 helpers do
   # def json_list(root,single_root,objs,serializer=nil)
@@ -17,7 +23,7 @@ helpers do
   # end
 
   def redis
-    @redis ||= Redis.current
+    @redis ||= Setup.make_redis
   end
 
   def json_list(root,single_root,objs,serializer=nil)
