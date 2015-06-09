@@ -9,3 +9,10 @@ task :load_cards do
   SaveCards.new.save!
   puts "Ending Card Count: #{Card.count}"
 end
+
+task :load_decks do
+  SaveDate.save!
+
+  Deck.delete_all
+  SaveDeck.save_all!
+end
