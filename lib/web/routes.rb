@@ -51,6 +51,12 @@ helpers do
       ran
     end
   end
+
+  def bootstrap_index(index_key)
+    index_key &&= "netrunner-ui:#{index_key}"
+    index_key ||= redis.get("netrunner-ui:current")
+    redis.get(index_key)
+  end
 end
 
 get "/api/cards" do
@@ -85,4 +91,9 @@ get "/api/card_breakdowns" do
     end
     json_list :cardBreakdowns, :card_breakdown, [breakdown]
   end
+end
+
+get '/' do
+  content_type 'text/html'
+  bootstrap_index(params[:index_key])
 end
