@@ -141,6 +141,19 @@ class Deck
   validates :side, presence: true, inclusion: %w(Runner Corp)
   validates :faction, presence: true
 
+  scope(:for_faction, lambda do |faction|
+    aggs = {}
+    aggs['Runner'] = %w(Anarch Shaper Criminal)
+    aggs['Corp'] = ['NBN']
+
+    puts "for_faction #{faction}"
+    if aggs[faction.to_s]
+      where(side: faction)
+    else
+      where(faction: faction)
+    end
+  end)
+
   def update_cards!
     res = []
 

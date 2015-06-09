@@ -87,7 +87,7 @@ class CardBreakdown
   fattr(:included_cards) { [] }
 
   fattr(:decks) do
-    res = Deck.where(faction: faction)
+    res = Deck.for_faction(faction)
     if included_cards.size > 0
       codes = included_cards.map { |x| x.code }
       res = res.where("cards.code" => {"$all" => codes})
