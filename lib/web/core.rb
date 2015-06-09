@@ -17,7 +17,11 @@ class CardSerializer < BaseSerializer
   attributes :id, :name, :card_type, :faction, :side, :set_name, :image_url, :ndb_url
 
   def image_url
-    object.local_image_url
+    if ENV['remote_image_url']
+      object.remote_image_url
+    else
+      object.local_image_url
+    end
   end
 end
 

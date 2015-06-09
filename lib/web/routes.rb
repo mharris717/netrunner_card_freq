@@ -43,7 +43,7 @@ helpers do
     key += "z"
     content_type :json
     existing = redis.get(key)
-    if existing
+    if existing && ENV['use_cached_json']=='1'
       existing
     else
       ran = yield
