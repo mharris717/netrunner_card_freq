@@ -26,7 +26,7 @@ class SaveDate
 
   class << self
     def save!
-      date = Date.new(2015,5,28)
+      date = Date.new(2015,6,8)
       50.times do
         puts date
         save = SaveDate.new(date: date)
