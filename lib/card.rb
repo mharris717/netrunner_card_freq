@@ -24,21 +24,23 @@ class SaveCards
   def create_card!(raw)
     Card.create! attrs_for_raw(raw)
   end
-  def create!
-    body.each do |raw|
-      create_card! raw
-    end
-  end
   def save!
-    create! if Card.count == 0
-  end
-  def update!
     body.each do |raw|
-      attrs = attrs_for_raw(raw)
-      existing = Card.first_only(code: raw['code'])
-      existing.update_attributes! attrs
+      save_card! raw
     end
   end
+  def save_card!(raw)
+    exists = Card.where(code: raw['code']).first
+    return if exists
+    create_card!(raw)
+  end
+  # def update!
+  #   body.each do |raw|
+  #     attrs = attrs_for_raw(raw)
+  #     existing = Card.first_only(code: raw['code'])
+  #     existing.update_attributes! attrs
+  #   end
+  # end
 
   def save_images!
     c = Card.count

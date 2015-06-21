@@ -26,9 +26,9 @@ class SaveDate
 
   class << self
     def save!
-      date = Date.new(2015,6,8)
+      date = Date.today - 1
       50.times do
-        puts date
+        puts "Saving list for #{date}"
         save = SaveDate.new(date: date)
         save.save!
         date -= 1
@@ -46,7 +46,7 @@ class DeckDay
   validates :date, presence: true, uniqueness: true
 
   def save_decks!
-    puts "Saving #{date} #{Deck.count}"
+    puts "Saving individual decks for #{date}. Starting count: #{Deck.count}"
     decks.each do |raw|
       SaveDeck.new(raw_deck: raw).save!
     end
@@ -120,7 +120,7 @@ class SaveDeck
   end
 
   def self.save_all!
-    DeckDay.all.each { |x| x.save_decks! }
+    DeckDay.order(date: :desc).each { |x| x.save_decks! }
   end
 end
 

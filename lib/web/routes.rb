@@ -39,8 +39,12 @@ helpers do
     res.to_json
   end
 
+  def global_cache_key
+    ENV['global_cache_key'] || "nokey"
+  end
+
   def cached_json(key,&b)
-    key += "z"
+    key = "#{global_cache_key}:#{key}"
     content_type :json
     existing = redis.get(key)
     if existing && ENV['use_cached_json']=='1'
