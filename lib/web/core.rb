@@ -63,10 +63,6 @@ class CardBreakdownSerializer < BaseSerializer
     res
   end
 
-  def id
-    "#{object.faction}#{object.card_faction}"
-  end
-
   def num_decks
     object.decks.size
   end

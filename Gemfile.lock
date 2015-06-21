@@ -12,6 +12,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    andand (1.3.3)
     bson (2.3.0)
     builder (3.2.2)
     connection_pool (2.2.0)
@@ -67,6 +68,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
+  andand
   json
   mharris_ext
   mongoid

@@ -88,6 +88,10 @@ class CardBreakdown
   attr_accessor :faction, :card_faction, :card_type
   fattr(:included_cards) { [] }
 
+  def id
+    [faction,card_faction,card_type,included_cards.first.andand.id].join("_")
+  end
+
   fattr(:decks) do
     res = Deck.for_faction(faction)
     if included_cards.size > 0
