@@ -63,7 +63,7 @@ helpers do
     content_type :json
     serializer = ActiveModel::ArraySerializer.new(objs, root: root)
     res = serializer.as_json
-    res[:meta] = {generated_at: Time.now}
+    res[:meta] = {generated_at: Time.now, global_last_modified: global_last_modified}
     res.to_json
   end
 

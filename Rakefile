@@ -43,3 +43,10 @@ task clear_last_modified: :environment do
   redis = Setup.make_redis
   redis.del :global_last_modified
 end
+
+task reduce_last_modified: :environment do
+  redis = Setup.make_redis
+  val = redis.get :global_last_modified
+  val = val - 60*60*24
+  res.set :global_last_modified, val
+end
