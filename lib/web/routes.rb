@@ -111,6 +111,7 @@ end
 # end
 
 get "/api/card_breakdowns" do
+  redis.incr :breakdown_visits
   breakdown = CardBreakdown.new(faction: params[:faction], 
                                 card_faction: params[:card_faction], 
                                 card_type: params[:card_type])
@@ -127,8 +128,15 @@ get "/api/card_breakdowns" do
 end
 
 get '/' do
+  redis.incr :index_visits
   etag "ember_index"
   last_modified global_last_modified
   content_type 'text/html'
   bootstrap_index(params[:index_key])
+end
+
+get "/visit_counts" do
+  index = redis.get(:index_visits)
+  breakdown = redis.get(:breakdown_visits)
+  "Index: #{index}, Breakdown: #{breakdown}"
 end
