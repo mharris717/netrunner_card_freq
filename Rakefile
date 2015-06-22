@@ -38,3 +38,8 @@ task load_cards: :environment do
   SaveCards.new.save!
   puts Card.count
 end
+
+task clear_last_modified: :environment do
+  redis = Setup.make_redis
+  redis.del :global_last_modified
+end
