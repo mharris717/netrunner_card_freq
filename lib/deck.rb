@@ -25,9 +25,10 @@ class SaveDate
   end
 
   class << self
-    def save!
+    def save!(num_days=nil)
+      num_days = 50 if num_days.blank?
       date = Date.today - 1
-      50.times do
+      num_days.times do
         puts "Saving list for #{date}"
         save = SaveDate.new(date: date)
         save.save!
@@ -120,7 +121,7 @@ class SaveDeck
   end
 
   def self.save_all!
-    DeckDay.order(date: :desc).each { |x| x.save_decks! }
+    DeckDay.order(date: :desc).limit(Setup.num_days).each { |x| x.save_decks! }
   end
 end
 
@@ -142,6 +143,7 @@ class Deck
   validates :faction, presence: true
 
   scope(:for_faction, lambda do |faction|
+    raise "no faction passed to for_faction" unless faction.present?
     aggs = {}
     aggs['Runner'] = %w(Anarch Shaper Criminal)
     aggs['Corp'] = ['NBN']

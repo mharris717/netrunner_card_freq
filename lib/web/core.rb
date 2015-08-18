@@ -14,7 +14,7 @@ class BaseSerializer < ActiveModel::Serializer
 end
 
 class CardSerializer < BaseSerializer
-  attributes :id, :name, :card_type, :faction, :side, :set_name, :image_url, :ndb_url
+  attributes :id, :name, :card_type, :faction, :side, :set_name, :image_url, :ndb_url, :sub_card_type
 
   def image_url
     if ENV['remote_image_url']

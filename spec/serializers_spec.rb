@@ -111,7 +111,7 @@ describe "card breakdown" do
     serializer = CardBreakdownSerializer.new(breakdown)
     serializer.as_json.tap do |payload|
       payload = HashWithIndifferentAccess.new(payload)
-      payload[:card_breakdown][:id].should == 'Shaper'
+      payload[:card_breakdown][:id].should == 'Shaper___'
       payload[:card_frequencies].size.should == 10
       payload[:cards].size.should == 10
     end

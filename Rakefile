@@ -13,7 +13,7 @@ task :environment do
   Mongoid.load!("mongoid.yml", env)
 end
 
-task load_cards: :environment do
+task reload_cards: :environment do
   puts "Beginning Card Count: #{Card.count}"
   Card.delete_all
   SaveCards.new.save!
@@ -21,7 +21,7 @@ task load_cards: :environment do
 end
 
 task reload_decks: :environment do
-  SaveDate.save!
+  SaveDate.save! Setup.num_days
 
   Deck.delete_all
   SaveDeck.save_all!
@@ -33,11 +33,13 @@ task load_new_decks: :environment do
   SaveDeck.save_all!
 end
 
-task load_cards: :environment do
+task load_new_cards: :environment do
   puts Card.count
   SaveCards.new.save!
   puts Card.count
 end
+
+task refresh_all: %w(reload_cards reload_decks)
 
 task clear_last_modified: :environment do
   redis = Setup.make_redis

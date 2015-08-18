@@ -8,5 +8,9 @@ module Setup
         Redis.current
       end
     end
+
+    fattr(:num_days) do
+      (ENV['num_days'] || 50).to_i
+    end
   end
 end
