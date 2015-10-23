@@ -140,3 +140,7 @@ get "/visit_counts" do
   breakdown = redis.get(:breakdown_visits)
   "Index: #{index}, Breakdown: #{breakdown}"
 end
+
+get "/proxies" do
+  redirect "http://netrunnercardfreq.herokuapp.com/#/proxies"
+end
